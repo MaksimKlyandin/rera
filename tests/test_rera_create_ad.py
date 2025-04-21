@@ -33,7 +33,7 @@ def test_create_ad_rent(browser, property_type):
     deal_type_btn = browser.find_element(By.XPATH, "//label[input[@value='rent']]")
     deal_type_btn.click()
     #Property type
-    property_type_btn = browser.find_element(By.XPATH, xpath_selector)
+    property_type_btn = browser.find_element(By.XPATH, f"//label[input[@value='{property_type}']]")
     property_type_btn.click()
     
     wait = WebDriverWait(browser, 15).until(
