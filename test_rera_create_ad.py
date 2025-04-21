@@ -23,7 +23,7 @@ def test_create_ad_rent(browser, property_type):
     
 #Этап создания
 #Step 1
-    create_ad_button = browser.find_element(By.XPATH, "//button[text()=' Create an Ad']")
+    create_ad_button = browser.find_element(By.CSS_SELECTOR, "button .w-5")
     create_ad_button.click()
     
     wait = WebDriverWait(browser, 15).until(
