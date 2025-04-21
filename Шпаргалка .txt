@@ -1,0 +1,310 @@
+Запуск Env
+
+	c:\Users\maksim\environments\selenium_env\Scripts\activate.bat
+
+Запуск файла .py
+cd selenium_course
+	c:\Users\maksim\selenium_course\lesson6_step5.py
+	
+Импорты перед стартом	
+	
+	import math
+	from selenium import webdriver
+	from selenium.webdriver.common.by import By
+	import time 
+	from selenium.webdriver.support.ui import Select
+
+	
+Старт браузера по ссылке
+
+	link = "http://suninjuly.github.io/simple_form_find_task.html"
+    browser = webdriver.Chrome()
+    browser.get(link)
+	
+Поиск элемента через метод find element By от Selenium (вернет 1 элемент)
+
+	button = browser.find_element(By.ID, "submit")
+
+	find_element(By.ID, value) — поиск по уникальному атрибуту id элемента. Если ваши разработчики проставляют всем элементам в приложении уникальный id, то вам повезло, и вы чаще всего будет использовать этот метод, так как он наиболее стабильный;
+	find_element(By.CSS_SELECTOR, value) — поиск элемента с помощью правил на основе CSS. Это универсальный метод поиска, так как большинство веб-приложений использует CSS для вёрстки и задания оформления страницам. Если find_element_by_id вам не подходит из-за отсутствия id у элементов, то скорее всего вы будете использовать именно этот метод в ваших тестах;
+	find_element(By.XPATH, value) — поиск с помощью языка запросов XPath, позволяет выполнять очень гибкий поиск элементов;
+	find_element(By.NAME, value) — поиск по атрибуту name элемента;
+	find_element(By.TAG_NAME, value) — поиск элемента по названию тега элемента;
+	find_element(By.CLASS_NAME, value) — поиск по значению атрибута class;
+	find_element(By.LINK_TEXT, value) — поиск ссылки на странице по полному совпадению;
+	find_element(By.PARTIAL_LINK_TEXT, value) — поиск ссылки на странице, если текст селектора совпадает с любой частью текста ссылки.
+    
+Самый первый шаблон теста:
+    from selenium import webdriver
+    from selenium.webdriver.common.by import By
+    import time 
+
+    link = "http://suninjuly.github.io/simple_form_find_task.html"
+
+    try:
+        browser = webdriver.Chrome()
+        browser.get(link)
+
+        input1 = browser.find_element(By.TAG_NAME, value1)
+        input1.send_keys("Ivan")
+        input2 = browser.find_element(By.NAME, value2)
+        input2.send_keys("Petrov")
+        input3 = browser.find_element(By.CLASS_NAME, value3)
+        input3.send_keys("Smolensk")
+        input4 = browser.find_element(By.ID, "country")
+        input4.send_keys("Russia")
+        button = browser.find_element(By.CSS_SELECTOR, "button.btn")
+        button.click()
+
+    finally:
+        # успеваем скопировать код за 30 секунд
+        time.sleep(30)
+        # закрываем браузер после всех манипуляций
+        browser.quit()
+
+    # не забываем оставить пустую строку в конце файла
+	
+Поиск элементов через метод find elements By от Selenium (вернет n элементов числом)
+	
+	elements = browser.find_elements("вставьте сюда нужный локатор", "вставьте сюда нужное значение")
+	
+Цикл for
+
+	for element in elements:
+        element.send_keys("Мой ответ")
+
+Поиск аттрибута элемента с помощью get_attribute:
+	people_radio = browser.find_element(By.ID, "peopleRule")  #Нашли радиокнопку
+
+	people_checked = people_radio.get_attribute("checked")    #Нашли аттрибут checked (еще можно проверять disabled)
+	print("value of people radio: ", people_checked)          #Для отладки можно вывести текст с резульатом 
+	assert people_checked == "true", "People radio is not selected by default" 
+	#Проверка. Если people_checked = true, значит проверка успешная. Если не равно true, то "People radio is not selected by default" 
+
+Select by Value: (А еще: select.select_by_visible_text("text") и select.select_by_index(index))
+	from selenium.webdriver.support.ui import Select
+	select = Select(browser.find_element(By.TAG_NAME, "select"))
+	select.select_by_value("1") # ищем элемент с текстом "Python"
+Вытащить число:
+	number = int(browser.find_element(By.CSS_SELECTOR, ".example").text)
+
+Промотать страницу:
+	button = browser.find_element(By.TAG_NAME, "button")
+	browser.execute_script("return arguments[0].scrollIntoView(true);", button)
+    На 100 пикселей: browser.execute_script("window.scrollBy(0, 100);")
+Отправка файла file.txt (лежит в папке с запускаемым файлом .py)
+import os 
+
+current_dir = os.path.abspath(os.path.dirname(__file__))    # получаем путь к директории текущего исполняемого файла 
+file_path = os.path.join(current_dir, 'file.txt')           # добавляем к этому пути имя файла 
+element = browser.find_element(By.CSS_SELECTOR, "[type='file']")
+element.send_keys(file_path)
+Действия:
+
+	Ввод значений:
+    input.send_keys("Ivan")
+	
+	Клик:
+    link.click()
+	
+	Подождать:
+	time.sleep(5)
+	
+	Ахуенно подождать:
+    # говорим WebDriver искать каждый элемент в течение 5 секунд
+	browser = webdriver.Chrome()  
+	browser.implicitly_wait(5)
+	или 
+    # говорим Selenium проверять в течение 5 секунд, пока кнопка не станет кликабельной
+	from selenium.webdriver.support.ui import WebDriverWait
+	from selenium.webdriver.support import expected_conditions as EC
+	button = WebDriverWait(browser, 5).until(
+        EC.element_to_be_clickable((By.ID, "verify"))
+    )
+    # говорим Selenium проверять в течение 5 секунд пока кнопка станет неактивной
+    button = WebDriverWait(browser, 5).until_not(
+        EC.element_to_be_clickable((By.ID, "verify"))
+    )
+	
+	Клик по радиокнопке(чек-боксу):
+	option1 = browser.find_element(By.CSS_SELECTOR, "[value='python']")
+	option1.click()
+	
+	Клик по лейблу радиокнопки:
+	option1 = browser.find_element(By.CSS_SELECTOR, "[for='java']")
+	option1.click()
+
+Закрытие браузера (конец скрипта)
+	
+    browser.quit()
+Прочее:
+	Принт для отладки:
+		print(x, type(x))
+
+Alert, confirm и prompt:
+
+Переключиться и подтвердить:
+	alert = browser.switch_to.alert # вместо alert в начале бывает confirm или prompt
+	alert.accept()  
+Получить текст:
+	alert_text = alert.text
+Ввести текст:
+	prompt.send_keys("My answer")
+
+Вкладки браузера:
+	Имя текущей вкладки: 
+	first_window = browser.window_handles[0]
+	Переход на вторую вкладку:
+	new_window = browser.window_handles[1]
+	browser.switch_to.window(new_window)
+	или 
+	browser.switch_to.window(browser.window_handles[1])
+
+Assert:
+	assert people_checked == "true", "People radio is not selected by default" 
+	#Проверка. Если people_checked = true, значит проверка успешная. Если не равно true, то "People radio is not selected by default" 
+	
+	assert "successful" in message.text
+    
+    assert "login" in browser.current_url, # сообщение об ошибке
+
+
+EC. Ожидааемое состояние:
+    # говорим Selenium проверять в течение 5 секунд, пока кнопка не станет кликабельной
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+    button = WebDriverWait(browser, 5).until(
+        EC.element_to_be_clickable((By.ID, "verify"))
+    )
+    Еще варианты для expected_conditions: 
+        title_is
+        title_contains
+        presence_of_element_located
+        visibility_of_element_located
+        visibility_of
+        presence_of_all_elements_located
+        .text_to_be_present_in_element((By.ID, "здесь пишем ID"), "здесь текст")
+        text_to_be_present_in_element_value
+        frame_to_be_available_and_switch_to_it
+        invisibility_of_element_located
+        element_to_be_clickable
+        staleness_of
+        element_to_be_selected
+        element_located_to_be_selected
+        element_selection_state_to_be
+        element_located_selection_state_to_be
+        alert_is_present
+        
+Полезные ссылки:
+    https://stepik.org/lesson/171979/step/1?unit=146657
+    
+    
+Форматирование строки через format()
+    print("Let's count together: {}, then goes {}, and then {}".format("one", "two", "three"))
+    получится
+    Let's count together: one, then goes two, and then three
+Форматирование строки через f-string
+    str1 = "one"
+    str2 = "two"
+    str3 = "three"
+    print(f"Let's count together: {str1}, then goes {str2}, and then {str3}")
+    получится
+    Итог выполнения выражений в интерпретаторе:
+    Let's count together: one, then goes two, and then three
+    
+    Пример assert :
+        catalog_text = self.catalog_link.text # считываем текст и записываем его в переменную
+        assert catalog_text == "Каталог", \
+        f"Wrong language, got {catalog_text} instead of 'Каталог'"  
+
+Шаблон для unittest:
+import unittest
+
+class TestAbs(unittest.TestCase):
+    def test_abs1(self):
+        self.assertEqual(abs(-42), 42, "Should be absolute value of a number")
+        
+    def test_abs2(self):
+        self.assertEqual(abs(-42), -42, "Should be absolute value of a number")
+        
+if __name__ == "__main__":
+    unittest.main()
+    
+    
+Запуск тестов через pytest
+pytest scripts/selenium_scripts
+# найти все тесты в директории scripts/selenium_scripts
+
+pytest test_user_interface.py
+# найти и выполнить все тесты в файле 
+
+pytest scripts/drafts.py::test_register_new_user_parametrized
+# найти тест с именем test_register_new_user_parametrized в указанном файле в указанной директории и выполнить 
+
+
+Пример использования фикстур:
+import pytest
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+
+link = "http://selenium1py.pythonanywhere.com/"
+
+
+@pytest.fixture(scope="class")
+def browser():
+    print("\nstart browser for test..")
+    browser = webdriver.Chrome()
+    yield browser
+    print("\nquit browser..")
+    browser.quit()
+
+
+class TestMainPage1():
+
+    # вызываем фикстуру в тесте, передав ее как параметр
+    def test_guest_should_see_login_link(self, browser):
+        print("start test1")
+        browser.get(link)
+        browser.find_element(By.CSS_SELECTOR, "#login_link")
+        print("finish test1")
+        
+Маркировка тестов
+    @pytest.mark.smoke
+pytest -s -v -m smoke test_fixture8.py - запустить смоук
+pytest -s -v -m "not smoke" test_fixture8.py - все кроме смоук
+pytest -s -v -m "smoke or regression" test_fixture8.py - и смоук и регресс
+pytest -s -v -m "smoke and win10" test_fixture81.py - все, где есть обе метки
+
+    @pytest.mark.skip - пропуск теста 
+    @pytest.mark.xfail - заведомо-падающий тест
+    @pytest.mark.xfail(reason="fixing this bug right now") - 
+    указываем причину заведомого падения. запускать с -rX.!!!!!!
+    @pytest.mark.xfail(strict=True) - пометить как Fail, если тест неожиданно прошел
+    
+Регистрация меток в pytest.ini
+[pytest]
+markers =
+    smoke: marker for smoke tests
+    regression: marker for regression tests
+    
+!!!Параметризация тестов!!!
+@pytest.mark.parametrize('language', ["ru", "en-gb"])
+def test_guest_should_see_login_link(browser, language):
+    link = f"http://selenium1py.pythonanywhere.com/{language}/"
+    browser.get(link)
+    browser.find_element(By.CSS_SELECTOR, "#login_link")
+    
+Переменные окружения: (сначала 
+установить pip install python-dotenv
+создать .env в котором будут креды)
+
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # Загружаем переменные из .env
+
+LOGIN = os.getenv("LOGIN")
+PASSWORD = os.getenv("PASSWORD")
+
+Запуск с rerun
+pytest -v --tb=line --reruns 1 --browser_name=chrome test_rerun.py
