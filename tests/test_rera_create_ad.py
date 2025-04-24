@@ -11,37 +11,32 @@ from selenium.webdriver.common.action_chains import ActionChains
 from utils.auth_helper import login
 
 
-
-link = "https://client.dev.rera.cy/"
-EMAIL = "1@g.com"
-OTP = "111111"
-
-@pytest.mark.parametrize("property_type", 
-["flat"])
-def test_create_ad_rent(browser, property_type):
+def test_create_ad_rent(browser):
     login(browser)
     
 #Этап создания
 #Step 1
-    create_ad_button = browser.find_element(By.CSS_SELECTOR, "button .w-5")
+    create_ad_button = browser.find_element(By.CSS_SELECTOR, "button:has(svg.w-5)")
     create_ad_button.click()
     
-    wait = WebDriverWait(browser, 15).until(
+    wait = WebDriverWait(browser, 30).until(
         EC.element_to_be_clickable((By.XPATH, "//button[text()='Next']"))
     )
     #Deal type RENT
     deal_type_btn = browser.find_element(By.XPATH, "//label[input[@value='rent']]")
     deal_type_btn.click()
     #Property type
-    property_type_btn = browser.find_element(By.XPATH, f"//label[input[@value='{property_type}']]")
+    property_type_btn = browser.find_element(By.XPATH, "//label[input[@value='flat']]")
     property_type_btn.click()
     
-    wait = WebDriverWait(browser, 15).until(
-        EC.element_to_be_clickable((By.XPATH, "//button[text()='Next']"))
+    wait = WebDriverWait(browser, 30).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".min-w-32 > button"))
     )
-    next_btn = browser.find_element(By.XPATH, "//button[text()='Next']")
-    next_btn.click()
-    element = WebDriverWait(browser, 10).until(EC.presence_of_element_located(
+    next_btn = browser.find_element(By.CSS_SELECTOR, ".min-w-32 > button")
+    actions = ActionChains(browser)
+    # Скролл и клик одной цепочкой действий
+    actions.move_to_element(next_btn).click().perform()
+    element = WebDriverWait(browser, 30).until(EC.presence_of_element_located(
     (By.XPATH, "//span[text()='Step 2/7 - Location']")))
     #time.sleep(5)
     
@@ -56,7 +51,33 @@ def test_create_ad_rent(browser, property_type):
     actions = ActionChains(browser)
 
     # Захватываем карту, двигаем её на 300 пикселей вправо и 200 пикселей вниз
-    actions.click_and_hold(map_element).move_by_offset(300, 200).release().perform()
+    actions.click_and_hold(map_element).move_by_offset(30, 20).release().perform()
 
-    # Ждем, чтобы увидеть результат
+    # Ждем завершения анимации более надежным способом
+    #WebDriverWait(browser, 5).until(
+    #    EC.presence_of_element_located((By.CSS_SELECTOR, ".leaflet-grab"))
+    #)
+    #time.sleep(5)
+    next_btn = WebDriverWait(browser, 30).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".min-w-32 > button"))
+    )
     time.sleep(3)
+    actions = ActionChains(browser)
+    # Скролл и клик одной цепочкой действий
+    actions.move_to_element(next_btn).click().perform()
+#Step 3
+    wait_screen3 = WebDriverWait(browser, 30).until(EC.presence_of_element_located(
+    (By.CSS_SELECTOR, "span > span")))
+    time.sleep(3)
+
+    # Click on flat type dropdown
+    flat_type_dropdown = browser.find_element(By.XPATH, "//span[text()='Flat type']/following-sibling::div//button")
+    flat_type_dropdown = WebDriverWait(browser, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[text()='Flat type']/following-sibling::div//button"))
+    )
+    actions.move_to_element(flat_type_dropdown).click().perform()
+    time.sleep(3)
+
+    # Select Apartment option
+    apartment_option = browser.find_element(By.XPATH, "//button//span[text()='Apartment']")
+    actions.move_to_element(apartment_option).click().perform()
