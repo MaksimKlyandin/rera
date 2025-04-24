@@ -1,6 +1,7 @@
 import time
 import math
 import pytest
+import random  # Add this import
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import os
@@ -57,7 +58,7 @@ def test_create_ad_rent(browser):
     #WebDriverWait(browser, 5).until(
     #    EC.presence_of_element_located((By.CSS_SELECTOR, ".leaflet-grab"))
     #)
-    #time.sleep(5)
+    time.sleep(2)
     next_btn = WebDriverWait(browser, 30).until(
         EC.element_to_be_clickable((By.CSS_SELECTOR, ".min-w-32 > button"))
     )
@@ -76,8 +77,44 @@ def test_create_ad_rent(browser):
         EC.element_to_be_clickable((By.XPATH, "//span[text()='Flat type']/following-sibling::div//button"))
     )
     actions.move_to_element(flat_type_dropdown).click().perform()
-    time.sleep(3)
+    time.sleep(1)
 
     # Select Apartment option
     apartment_option = browser.find_element(By.XPATH, "//button//span[text()='Apartment']")
     actions.move_to_element(apartment_option).click().perform()
+    # Click on Total floors dropdown
+    total_floors_input = WebDriverWait(browser, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[text()='Total floors']/following-sibling::div//input"))
+    )
+    total_floors_input.send_keys(str(random.randint(1, 20)))
+    time.sleep(2)
+    # Click on bedroom type dropdown
+    bedroom_type_dropdown = WebDriverWait(browser, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[text()='Bedrooms']/following-sibling::div//button")) 
+    )
+    bedroom_type_dropdown.click()
+    time.sleep(2)
+    # Select 1 bedroom option
+    bedroom_option = WebDriverWait(browser, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//button//span[text()='1 bedroom']"))
+      )
+    #Full area
+    full_area_input = WebDriverWait(browser, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[text()='Full area']/following-sibling::div//input"))
+    )
+    full_area = random.randint(1, 1000)
+    full_area_input.send_keys(str(full_area))
+    time.sleep(2)  
+    # Living area
+    living_area_input = WebDriverWait(browser, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[text()='Living area']/following-sibling::div//input"))  
+    )
+    living_area_input.send_keys(str(random.randint(1, full_area)))
+
+    actions.move_to_element(next_btn).click().perform()
+    time.sleep(2)
+    #Step 4 
+
+
+
+    browser.quit()
