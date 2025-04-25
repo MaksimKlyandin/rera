@@ -58,18 +58,18 @@ def test_create_ad_rent(browser):
     #WebDriverWait(browser, 5).until(
     #    EC.presence_of_element_located((By.CSS_SELECTOR, ".leaflet-grab"))
     #)
-    time.sleep(2)
+    time.sleep(1)
     next_btn = WebDriverWait(browser, 30).until(
         EC.element_to_be_clickable((By.CSS_SELECTOR, ".min-w-32 > button"))
     )
-    time.sleep(3)
+    time.sleep(1)
     actions = ActionChains(browser)
     # Скролл и клик одной цепочкой действий
     actions.move_to_element(next_btn).click().perform()
 #Step 3
     wait_screen3 = WebDriverWait(browser, 30).until(EC.presence_of_element_located(
     (By.CSS_SELECTOR, "span > span")))
-    time.sleep(3)
+    time.sleep(1)
 
     # Click on flat type dropdown
     flat_type_dropdown = browser.find_element(By.XPATH, "//span[text()='Flat type']/following-sibling::div//button")
@@ -87,33 +87,63 @@ def test_create_ad_rent(browser):
         EC.element_to_be_clickable((By.XPATH, "//span[text()='Total floors']/following-sibling::div//input"))
     )
     total_floors_input.send_keys(str(random.randint(1, 20)))
-    time.sleep(2)
+    time.sleep(1)
     # Click on bedroom type dropdown
     bedroom_type_dropdown = WebDriverWait(browser, 30).until(
         EC.element_to_be_clickable((By.XPATH, "//span[text()='Bedrooms']/following-sibling::div//button")) 
     )
     bedroom_type_dropdown.click()
-    time.sleep(2)
+    time.sleep(1)
     # Select 1 bedroom option
     bedroom_option = WebDriverWait(browser, 30).until(
-        EC.element_to_be_clickable((By.XPATH, "//button//span[text()='1 bedroom']"))
+        EC.element_to_be_clickable((By.XPATH, "//button//span[text()='1-bedroom']"))
       )
+    bedroom_option.click()
+    time.sleep(1)
     #Full area
     full_area_input = WebDriverWait(browser, 30).until(
-        EC.element_to_be_clickable((By.XPATH, "//span[text()='Full area']/following-sibling::div//input"))
+        EC.element_to_be_clickable((By.XPATH, "//span[text()='Full area, m²']/following-sibling::div//input"))
     )
     full_area = random.randint(1, 1000)
     full_area_input.send_keys(str(full_area))
-    time.sleep(2)  
+    time.sleep(1)  
     # Living area
     living_area_input = WebDriverWait(browser, 30).until(
-        EC.element_to_be_clickable((By.XPATH, "//span[text()='Living area']/following-sibling::div//input"))  
+        EC.element_to_be_clickable((By.XPATH, "//span[text()='Living area, m²']/following-sibling::div//input"))  
     )
     living_area_input.send_keys(str(random.randint(1, full_area)))
 
+    # Click on next button
+    next_btn = WebDriverWait(browser, 30).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".min-w-32 > button"))
+    )
     actions.move_to_element(next_btn).click().perform()
-    time.sleep(2)
-    #Step 4 
+    wait_screen4 = WebDriverWait(browser, 30).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "span > span")) 
+    )
+    time.sleep(3)
+    #Step 4 skipped
+    next_btn = WebDriverWait(browser, 30).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".min-w-32 > button"))
+    )
+    actions.move_to_element(next_btn).click().perform()
+    wait_screen5 = WebDriverWait(browser, 30).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "span > span"))
+    )
+    time.sleep(1)
+    #Step 5 skipped
+    next_btn = WebDriverWait(browser, 30).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".min-w-32 > button"))
+    )
+    actions.move_to_element(next_btn).click().perform()
+    wait_screen6 = WebDriverWait(browser, 30).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "span > span"))
+    )
+    time.sleep(1)
+    # Step 6
+    
+
+
 
 
 
