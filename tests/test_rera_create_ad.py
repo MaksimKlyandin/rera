@@ -1,7 +1,8 @@
 import time
 import math
 import pytest
-import random  # Add this import
+import random
+import logging
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import os
@@ -10,6 +11,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from utils.auth_helper import login
+
+# Configure logging to suppress WDM logs
+logging.getLogger('WDM').setLevel(logging.NOTSET)
 
 
 def test_create_ad_rent(browser):
@@ -68,7 +72,7 @@ def test_create_ad_rent(browser):
     actions.move_to_element(next_btn).click().perform()
 #Step 3
     wait_screen3 = WebDriverWait(browser, 30).until(EC.presence_of_element_located(
-    (By.CSS_SELECTOR, "span > span")))
+    (By.XPATH, "//span/span[contains(text(), '3')]")))
     time.sleep(1)
 
     # Click on flat type dropdown
@@ -119,28 +123,78 @@ def test_create_ad_rent(browser):
     )
     actions.move_to_element(next_btn).click().perform()
     wait_screen4 = WebDriverWait(browser, 30).until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, "span > span")) 
+        EC.presence_of_element_located((By.XPATH, "//span/span[contains(text(), '4')]")) 
     )
     time.sleep(3)
-    #Step 4 skipped
+#Step 4 skipped
+    print("Skipping Step 4 and proceeding to next step...")
     next_btn = WebDriverWait(browser, 30).until(
         EC.element_to_be_clickable((By.CSS_SELECTOR, ".min-w-32 > button"))
     )
     actions.move_to_element(next_btn).click().perform()
+    print("Clicked next button after Step 4")
+    
     wait_screen5 = WebDriverWait(browser, 30).until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, "span > span"))
+        EC.presence_of_element_located((By.XPATH, "//span/span[contains(text(), '5')]"))
     )
-    time.sleep(1)
-    #Step 5 skipped
+    print("Successfully moved to Step 5")
+    time.sleep(5)
+
+#Step 5 skipped
+    print("Skipping Step 5 and proceeding to next step...")
     next_btn = WebDriverWait(browser, 30).until(
         EC.element_to_be_clickable((By.CSS_SELECTOR, ".min-w-32 > button"))
     )
     actions.move_to_element(next_btn).click().perform()
+    print("Clicked next button after Step 5")
+    
     wait_screen6 = WebDriverWait(browser, 30).until(
+        EC.presence_of_element_located((By.XPATH, "//span/span[contains(text(), '6')]"))
+    )
+    print("Successfully moved to Step 6")
+    time.sleep(5)
+
+# Step 6
+    print("Starting Step 6 - Image upload process")
+    # Upload 5 files
+    image_files = [
+        "pics/1.jpg",
+        "pics/2.jpg", 
+        "pics/3.webp",
+        "pics/4.jpg",
+        "pics/5.webp"
+    ]
+    
+    for index, image_file in enumerate(image_files, 1):
+        print(f"Uploading image {index} of {len(image_files)}: {image_file}")
+        upload_input = browser.find_element(By.CSS_SELECTOR, "button.rk-photo-uploader__begin")
+        upload_input.send_keys(image_file)
+        
+        # Wait for each file upload to complete
+        WebDriverWait(browser, 30).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "div.rk-photo-uploader-item__status--green"))
+        )
+        print(f"Successfully uploaded image {index}")
+    # Additional verification for the success icon
+    success_icon = WebDriverWait(browser, 10).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "div.rk-photo-uploader-item__status--green svg"))
+    )
+    assert success_icon.is_displayed(), "Upload success icon is not displayed"
+    time.sleep(5)
+    #Description
+    description_input = WebDriverWait(browser, 30).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "textarea[rows='5']"))
+    )
+    #Next
+    next_btn = WebDriverWait(browser, 30).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".min-w-32 > button"))
+    )
+    actions.move_to_element(next_btn).click().perform()
+    wait_screen7 = WebDriverWait(browser, 30).until(
         EC.presence_of_element_located((By.CSS_SELECTOR, "span > span"))
     )
     time.sleep(1)
-    # Step 6
+#Step 7
     
 
 

@@ -42,14 +42,3 @@ def pytest_addoption(parser):
     parser.addoption("--browser_name", action="store", default="chrome",
                      help="Выберите браузер: chrome или firefox")
 
-
-@pytest.hookimpl(tryfirst=True, hookwrapper=True)
-def pytest_runtest_makereport(item):
-    outcome = yield
-    report = outcome.get_result()
-    
-    if report.failed:  # Если тест упал
-        with open(item.fspath, 'r', encoding='utf-8') as f:  # Указана кодировка 'utf-8'
-            lines = f.readlines()
-            failed_line = lines[report.location[1] - 1].strip()
-            logger.error(f"\n🔴 Тест упал на строке: {report.location[1]} → {failed_line}")
